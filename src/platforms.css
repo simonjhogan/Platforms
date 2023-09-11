@@ -1,0 +1,114 @@
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 11pt;
+}
+
+h1 {
+    border-bottom: 1px solid #ccc;
+    background-color: #eee;
+}
+
+form-row {
+    display: block;
+    padding: 5px;
+}
+
+form-field {
+    display: block;
+    padding: 5px;
+}
+
+form-label {
+    display: block;
+    padding: 5px;
+    font-size: 10pt;
+    color: #444;
+    font-weight: bold;
+}
+
+form-label.notes {
+    margin-top: 5px;;
+    font-weight: bold;
+}
+
+textarea.notes {
+    width: 50%;
+    min-width: 480px;
+    height: 5em;
+}
+
+.description {
+    font-weight: bold;
+    color: darkblue;
+}
+
+.button {
+    border: 1px solid #ccc;
+    background-color: #eee;
+    padding: 10px;
+}
+
+input, textarea {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 11pt;
+    padding: 3px;
+}
+
+input.button {
+    font-size: 10pt;  
+}
+
+.required {
+    font-size: 8pt;
+    color: #f00;
+    display: inline-block;
+    margin-left: 5px;
+    vertical-align: top;
+}
+
+report, grapth {
+    display: block;
+}
+
+.tick {
+    color: green;
+    font-weight: bold;;
+}
+
+.cross {
+    color: red;
+}
+
+table.data {
+    width: 95%;
+    font-size: 10pt;
+    border: 1px solid #ccc;
+    border-collapse: collapse;
+}
+
+table.data th {
+    text-align: left;
+    border: 1px solid #ccc;
+    background-color: #ccc;
+    padding: 3px;
+}
+
+table.data td {
+    text-align: left;
+    border: 1px solid #ccc;
+    padding: 3px;
+}
+
+.overview-label {
+    display: inline-block; 
+    width: 200px;
+    font-size: 8pt;
+    vertical-align: super;
+}
+
+.overview-bar {
+    display: inline-block; 
+    margin: 4px;
+    height: 12pt; 
+    border-bottom: 2px solid;
+}

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <title>Platform Choice Helper</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="all" href="./src/platforms.css">
+    <link rel="stylesheet" type="text/css" media="print" href="./src/print.css">
+    <script src="./src/data/platforms-data.js"></script>
+    <script src="./src/data/questions-data.js"></script>
+</head>
+
+<body>
+    <form onsubmit="report(); return false;">
+        <form-row>
+            <input class="button" type="submit" name="submit" value="Process" />
+            <input class="button" type="reset" name="reset" value="Reset" />
+            <input class="button" type="button" name="print" value="Print" onclick="window.print();"/>
+        </form-row>
+        <div id="main"></div>
+        <form-row>
+            <input class="button" type="submit" name="submit" value="Process" />
+            <input class="button" type="reset" name="reset" value="Reset" />
+            <input class="button" type="button" name="print" value="Print" onclick="window.print();"/>
+        </form-row>
+    </form>
+
+    <grapth id="grapth">
+
+    </grapth>
+    <report id="report">
+
+    </report>
+</body>
+<script>
+    var form = document.getElementById("main");
+
+    String.prototype.toTitleCase = function () {
+        return this.split(' ')
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+            .join(' ');
+    };
+
+    Object.entries(questions).forEach(([key, value]) => {
+        if (key !== 'detail') {
+            form.innerHTML += `<h1>${key.toTitleCase()}</h1>`;
+            Object.entries(value).forEach(([key2, value]) => {
+                form.innerHTML += `<form-row><form-label>${value[0]}</form-label><form-field>${getField(key, key2, value)}</form-field></form-row>`;
+            });
+        } else {
+            form.innerHTML += `<h1>${questions.detail.name}</h1>`;
+            form.innerHTML += `<p class='description'>${questions.detail.description}</p>`;
+            form.innerHTML += `<h5>Version: ${questions.detail.version} &nbsp;&nbsp; Updated: ${questions.detail.updated} &nbsp;&nbsp; Author: ${questions.detail.author}</h5>`;
+
+            form.innerHTML += `<h3>Assessment details</h3>`;
+            form.innerHTML += `<form-row><form-label>Title</form-label><form-field><input size="60" name="title" id="_title" value="" class="system" /><span class="required">*</span></form-field></form-row>`;
+            form.innerHTML += `<form-row><form-label>Description</form-label><form-field><textarea name="description" id="_description" class="system notes" ></textarea><span class="required">*</span></form-field></form-row>`;
+            form.innerHTML += `<form-row><form-label>Author</form-label><form-field><input size="60" name="author" id="_author" value="" class="system" /><span class="required">*</span></form-field></form-row>`;
+            form.innerHTML += `<form-row><form-label>Version</form-label><form-field><input type="number" name="version" id="_version" value="" class="system" /><span class="required">*</span></form-field></form-row>`;
+            form.innerHTML += `<form-row><form-label>Created/Modified</form-label><form-field><input type="date" name="modified" id="_modified" value="" class="system" /><span class="required">*</span></form-field></form-row>`;
+            form.innerHTML += `<form-row><form-label>Domain(s)</form-label>
+                <form-field><label><input type="checkbox" name="domain_itd" id="_domain_itd" value="itd" class="system"/> Corporate Applications (ITD)</label></form-field>
+                <form-field><label><input type="checkbox" name="domain_ddtd" id="_domain_ddtd" value="ddtd" class="system"/> Aged Care (DDTD)</label></form-field>
+                <form-field><label><input type="checkbox" name="domain_hprg" id="_domain_hprg" value="hprg" class="system"/> Health Products Portal (HPRG)</label></form-field>
+                <form-field><label><input type="checkbox" name="domain_data" id="_domain_data" value="data" class="system"/> Data and Analytics (HDP)</label></form-field>
+                </form-row>`;
+        };
+    });
+
+    function getField(i, k, v) {
+        var r;
+
+        switch (v[1]) {
+            case "!":
+                r = `<label title='Click the box to confirm.'><input id='${i}_${k}' name='${k}' data-group='${i}' type='checkbox' value='${v[2]}'/><strong> Yes</strong></label>`;
+                break;
+            case "%":
+                r = `<strong>0</strong><input id='${i}_${k}' name='${k}' data-group='${i}' type='range' min='0' max='100' title='Select a percentage value.' value='${v[2]}' required/><strong>100%</strong><span class="required">*</span>`;
+                break;
+            case "$":
+                r = `<strong>$</strong><input id='${i}_${k}' name='${k}' data-group='${i}' type='number' title='Enter a dollar amount.' value='${v[2]}' required/><span class="required">*</span>`;
+                break;
+            case "n":
+                r = `<input id='${i}_${k}' name='${k}' data-group='${i}' type='number' title='Enter a valid number.' value='${v[2]}' required/><span class="required">*</span>`;
+                break;
+            case "d":
+                r = `<input id='${i}_${k}' name='${k}' data-group='${i}' type='date' title='Enter or select a date.' value='${v[2]}' required/><span class="required">*</span>`;
+                break;
+            default:
+                r = `<input id='${i}_${k}' name='${k}' title='Enter a text value.' data-group='${i}' type='text'/>`;
+                break;
+        }
+
+        r += `<form-label class="notes">Notes</form-label><textarea id='${i}_${k}_notes' name='${k}_notes' data-group='${i}' class="notes"></textarea>`;
+        return r;
+    }
+
+    function report() {
+        var report = document.getElementById("report");
+        var g = document.getElementById("grapth");
+
+        var t;
+
+        t = `<h1>Report</h1>`;
+        t += `<h2>${document.getElementById("_title").value}</h2>`;
+        t += `<p>${document.getElementById("_description").value}</p>`;
+
+        g.innerHTML = `<h1>Overview</h1>`;
+
+        for (var p = 0; p < platforms.length; p++) {
+            var i = document.getElementsByTagName("input");
+            var count = 0;
+            var fields = 0;
+
+            t += `<h3>${platforms[p].detail.name}</h3>`;
+            t += `<table class="data">`;
+            t += `<tr><th style='width: 1em;'></th><th style='width: 15%;'>Category</th><th style='width: 10%;'>Application</th><th style='width: 10%;'>Platform</th><th>Notes</th></tr>`;
+
+            for (var x = 0; x < i.length; x++) {
+                if (i[x].className !== "button" && i[x].className !== "system") {
+                    fields++;
+                    var a = platforms[p][i[x].dataset.group][i[x].name];
+                    var c = compare(i[x].value, a[0], i[x].getAttribute('type'));
+
+                    if (c.indexOf('&#9745;') > 0) {
+                        count++;
+                    }
+
+                    t += `<tr><td>${c}</td><td>${i[x].dataset.group + "/" + i[x].name}</td><td>${i[x].value}</td><td>${a[0]}</td><td>${a[1]}</td></tr>`;
+                    //console.log(i[x].dataset.group, i[x].name, i[x].id, i[x].value);
+                    //console.log(p, i[x].dataset.group, i[x].name, a[0]);
+
+                    var c = document.getElementById(i[x].id + "_notes");
+                    //console.log(c.value);
+                }
+            }
+
+            t += `</table>`;
+            t += `<h5>Score: ${Math.round(count / fields * 100)}%</h5>`;
+            g.innerHTML += `<div><span class='overview-label'>${platforms[p].detail.name}</span>
+                <span class='overview-bar' style='width: ${Math.round(count / fields * 100) / 2}%; background-color: rgb(0, 0, ${Math.round((count / fields * 100) + 100)});'>
+                </span><span class='overview-label'>${Math.round(count / fields * 100)}%<label></div>`;
+
+        }
+        report.innerHTML = t;
+        g.scrollIntoView();
+    }
+
+    function compare(key, value, t) {
+        var k, v;
+
+        switch (t) {
+            case "checkbox":
+                k = Boolean(key);
+                v = Boolean(value);
+                if (k === v) {
+                    return `<span class='tick'>&#9745;</span>`;
+                }
+                break;
+            case "date":
+                k = new Date(key);
+                v = new Date(value);
+                if (k <= v) {
+                    return `<span class='tick'>&#9745;</span>`;
+                }
+                break;
+            default:
+                k = Number(key);
+                v = Number(value);
+                if (k <= v) {
+                    return `<span class='tick'>&#9745;</span>`;
+                }
+                break;
+        }
+
+        return `<span class='cross'>&#9746;</span>`;
+    }
+</script>
+
+</html>
